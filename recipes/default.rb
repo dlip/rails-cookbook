@@ -7,5 +7,6 @@
 # All rights reserved - Do Not Redistribute
 #
 
-include_recipe "rails::database"
 include_recipe "rails::webserver"
+include_recipe "rails::database"
+include_recipe "rails::rails"
