@@ -14,7 +14,7 @@ rbenv_ruby node[:rails][:ruby][:version]
 
 group "rbenv" do               
   action :create               
-  members "vagrant"            
+  members node[:rails][:user]            
   gid 1100
   append true
 end     
