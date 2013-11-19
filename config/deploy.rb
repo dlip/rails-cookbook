@@ -1,10 +1,10 @@
-set :application, 'chef'
+set :application, 'my_project'
 
 # set :repo_url, 'git@example.com:me/my_repo.git'
 
 # ask :branch, proc { `git rev-parse --abbrev-ref HEAD`.chomp }
 
-set :deploy_to, "/root"
+set :deploy_to, "/home/deploy/#{fetch :application}"
 # set :scm, :git
 
 # set :format, :pretty
@@ -16,8 +16,6 @@ set :deploy_to, "/root"
 
 # set :default_env, { path: "/opt/ruby/bin:$PATH" }
 # set :keep_releases, 5
-
-set :rsync_options, %w[--recursive --delete --delete-excluded --exclude .git*]
 
 namespace :deploy do
 
@@ -42,28 +40,23 @@ namespace :deploy do
 
 end
 
-namespace :bootstrap do
-  task :default do
-    on roles(:web) do
-      execute "curl -L https://www.opscode.com/chef/install.sh | bash"
+namespace :chef do
+  task :bootstrap do
+    on roles(:all) do
+      execute "curl -L https://www.opscode.com/chef/install.sh | sudo bash"
     end
   end
-end
 
-namespace :chef do
-  task :default do
-    on roles(:web) do
+  task :provision do
+    on roles(:all) do |role|
       run_locally do
+        execute("rm -rf chef/cookbooks")
         execute("berks install --path chef/cookbooks")
-        execute("tar czf '/tmp/chef.tar.gz' -C chef/ .")
+        rsync = "rsync -avz --delete-after --exclude .git* chef #{role.user}@#{role.hostname}:"
+        execute(rsync)
       end
       
-      target_dir = "#{fetch :deploy_to}/#{fetch :application}"
-      upload!("/tmp/chef.tar.gz","#{fetch :deploy_to}")
-      execute("rm -rf #{target_dir}")
-      execute("mkdir -p #{target_dir}")
-      execute("tar xzf 'chef.tar.gz' -C #{target_dir}")
-      execute("/bin/bash -c 'cd #{target_dir} && chef-solo -c solo.rb -j node_#{fetch :stage}.json'")
+      execute("sudo bash -c 'cd chef && chef-solo -c solo.rb -j node_#{fetch :stage}.json'")
     end
   end
 end
