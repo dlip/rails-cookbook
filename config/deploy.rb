@@ -1,11 +1,15 @@
 set :application, 'my_project'
 
-# set :repo_url, 'git@example.com:me/my_repo.git'
+set :repo_url, 'git@example.com:me/my_repo.git'
 
 # ask :branch, proc { `git rev-parse --abbrev-ref HEAD`.chomp }
 
 set :deploy_to, "/home/deploy/#{fetch :application}"
-# set :scm, :git
+set :scm, :git
+
+set :rbenv_type, :system
+set :rbenv_ruby, '2.0.0-p247'
+set :rbenv_custom_path, '/opt/rbenv'
 
 # set :format, :pretty
 # set :log_level, :debug
@@ -18,6 +22,29 @@ set :deploy_to, "/home/deploy/#{fetch :application}"
 # set :keep_releases, 5
 
 namespace :deploy do
+
+  def template(from, to)
+    erb = File.read(File.expand_path("../deploy/templates/#{from}", __FILE__))
+    text = ERB.new(erb).result(binding)
+    File.open("/tmp/#{from}", 'w') {|f| f.write(text) }
+    upload!("/tmp/#{from}", "/tmp/#{from}")
+    sudo "mv /tmp/#{from} #{to}"
+  end
+
+  desc 'Stop Unicorn'
+  after :updated, :stop_unicorn do
+    on roles(:app) do
+      execute "/etc/init.d/unicorn_#{fetch :application} stop"
+    end
+  end
+  
+  desc 'Start Unicorn'
+  after :published, :start_unicorn do
+    on roles(:app) do
+      execute "mkdir -p #{current_path}/tmp/pids"
+      execute "/etc/init.d/unicorn_#{fetch :application} start"
+    end
+  end
 
   desc 'Restart application'
   task :restart do
@@ -36,6 +63,26 @@ namespace :deploy do
     end
   end
 
+  before :updated, :setup_rails_config do
+    on roles(:app) do
+      template("nginx.conf.erb", "/etc/nginx/sites-enabled/#{fetch :application}")
+      template("unicorn_init.sh.erb", "/etc/init.d/unicorn_#{fetch :application}")
+      sudo ("chmod u+x /etc/init.d/unicorn_#{fetch :application}")
+
+      template("database.yml.erb", "#{release_path}/config/database.yml")
+    end
+  end
+
+  task :setup_config do
+    on roles(:app) do
+      template("nginx.conf.erb", "/etc/nginx/sites-enabled/#{fetch :application}")
+      template("unicorn_init.sh.erb", "/etc/init.d/unicorn_#{fetch :application}")
+      sudo ("chmod u+x /etc/init.d/unicorn_#{fetch :application}")
+    end
+  end
+
+  after :updated, "deploy:compile_assets"
+  after :updated, "deploy:migrate"
   after :finishing, 'deploy:cleanup'
 
 end
