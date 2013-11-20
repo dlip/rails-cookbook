@@ -10,6 +10,8 @@ set :rbenv_type, :system
 set :rbenv_ruby, '2.0.0-p247'
 set :rbenv_custom_path, '/opt/rbenv'
 
+set :migration_role, 'web'
+
 # set :format, :pretty
 # set :log_level, :debug
 # set :pty, true
