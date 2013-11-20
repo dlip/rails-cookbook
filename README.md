@@ -21,7 +21,7 @@ password: rootpass
 Requires auto sudo access on deploy user. You should edit the node options in chef/node_staging.json, and create other environments as needed.
 
 ### Config
-
+This assumumes you have a rails config for staging, you can rename to production etc. as you like.  
 Capistrano config in `config/deploy/staging.rb`  
 Chef configs are `chef/node_staging_db.json` (will be run on all staging targets with db role) and `chef/node_staging_web.json` (will be run on all staging targets with web role)
 
