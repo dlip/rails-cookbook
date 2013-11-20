@@ -9,4 +9,3 @@
 
 include_recipe "rails::webserver"
 include_recipe "rails::database"
-include_recipe "rails::rails"

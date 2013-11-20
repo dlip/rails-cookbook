@@ -5,5 +5,5 @@
     "server_repl_password": "change_me",
     "bind_address": "127.0.0.1"
   },
-  "run_list": [ "recipe[rails]" ]
+  "run_list": [ "recipe[rails::database]" ]
 }

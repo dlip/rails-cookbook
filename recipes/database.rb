@@ -1,4 +1,5 @@
 include_recipe "mysql::server"
+include_recipe "nginx"
 include_recipe "php::fpm"
 include_recipe "phpmyadmin"
 

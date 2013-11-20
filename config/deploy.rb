@@ -6,7 +6,6 @@ set :repo_url, 'git@example.com:me/my_repo.git'
 
 set :deploy_to, "/home/deploy/#{fetch :application}"
 set :scm, :git
-
 set :rbenv_type, :system
 set :rbenv_ruby, '2.0.0-p247'
 set :rbenv_custom_path, '/opt/rbenv'
@@ -95,15 +94,21 @@ namespace :chef do
   end
 
   task :provision do
+    run_locally do
+      execute("rm -rf chef/cookbooks")
+      execute("berks install --path chef/cookbooks")
+    end
+
     on roles(:all) do |role|
       run_locally do
-        execute("rm -rf chef/cookbooks")
-        execute("berks install --path chef/cookbooks")
         rsync = "rsync -avz --delete-after --exclude .git* chef #{role.user}@#{role.hostname}:"
         execute(rsync)
       end
+
+      role.roles.each do |role_name|
+        execute("sudo bash -c 'cd chef && chef-solo -c solo.rb -j node_#{fetch :stage}_#{role_name.to_s()}.json'")
+      end
       
-      execute("sudo bash -c 'cd chef && chef-solo -c solo.rb -j node_#{fetch :stage}.json'")
     end
   end
 end
