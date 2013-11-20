@@ -1,14 +1,16 @@
-# rails-berkshelf
+# rails-cookbook
 
-Rails 4 dev environment setup with rbenv using ruby 2.0, mysql, nginx and phpmyadmin.
+Cookbook created with Berkshelf for a complete Rails 4 environment including:
+* Vagrant 2 virtual machine configuration
+* Capistrano deploy to server on unicorn with nginx
+* Capistrano rsync cookbooks and run chef-solo remotely
+* Recipes for rbenv using ruby 2.0, mysql, nginx and phpmyadmin
 
-Also contains capistrano tasks to run chef-solo on remote.
-
-# Requirements
+# Setup
 `bundle install`  
 `vagrant plugin install vagrant-berkshelf`
 
-# Usage
+# Vagrant config
 
 ## PhpMyAdmin
 http://localhost:8888/  
@@ -23,3 +25,22 @@ Install chef-solo
 
 Rsync cookbooks to remote and run
 `bundle exec cap staging chef:provision`
+
+### Basic deploy user setup for CentOS
+
+`useradd -m -s /bin/bash deploy`
+
+`visudo`  
+add line  
+`deploy  ALL=(ALL)       NOPASSWD: ALL`  
+comment out  
+`# Defaults    requiretty`  
+
+`su - deploy`  
+`ssh-keygen -t rsa`  
+`cat .ssh/id_rsa.pub`  
+give key deploy access to your git repository  
+
+`vi .ssh/authorized_keys`  
+paste public key from deploy location  
+`chmod 600 -R .ssh/authorized_keys`
