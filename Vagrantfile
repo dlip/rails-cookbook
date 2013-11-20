@@ -89,7 +89,15 @@ Vagrant.configure("2") do |config|
       },
       :rails => {
         :user => 'vagrant',
-        :group => 'vagrant'
+        :group => 'vagrant',
+        :ruby => {
+          :version => "2.0.0-p247"
+        },
+        :mysql => {
+          :user => "my_project",
+          :password => "change_me",
+          :db_prefix => "my_project"
+        }
       }
     }
 
