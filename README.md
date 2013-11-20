@@ -20,8 +20,8 @@ password: rootpass
 ## Chef Solo
 ### Config
 Requires auto sudo access on deploy user. This assumes you have a rails config for staging, you can rename to production etc. as you like.  
-* Capistrano config in `config/deploy/staging.rb`  
-* Chef configs are `chef/node_staging_db.json` (will be run on all staging targets with db role) and `chef/node_staging_web.json` (will be run on all staging targets with web role)
+* Config in `config/deploy/staging.rb`  
+  * The chef config is created from the `:node` array. `:db` and `:web` is the config for each role. 
 * Templates database.yml etc. in `config/deploy/templates`
 
 ### Commands
