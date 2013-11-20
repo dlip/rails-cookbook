@@ -94,22 +94,39 @@ namespace :chef do
   end
 
   task :provision do
+    require "json"
+
+    # Generate node.json
+    on roles(:all) do |role|
+      node = role.properties.node
+      role.roles.each do |role_name|
+        data = node[role_name].to_json
+        filename = "node_#{fetch :stage}_#{role_name.to_s()}.json"
+        File.open("chef/#{filename}", 'w') {|f| f.write(data) }
+      end
+
+    end
+
+    # Update cookbooks
     run_locally do
       execute("rm -rf chef/cookbooks")
       execute("berks install --path chef/cookbooks")
     end
 
     on roles(:all) do |role|
+      # Rsync cookbooks to each server
       run_locally do
         rsync = "rsync -avz --delete-after --exclude .git* chef #{role.user}@#{role.hostname}:"
         execute(rsync)
       end
 
+      # Run chef for each role on each server
       role.roles.each do |role_name|
         execute("sudo bash -c 'cd chef && chef-solo -c solo.rb -j node_#{fetch :stage}_#{role_name.to_s()}.json'")
       end
       
     end
+
   end
 end
 

@@ -8,3 +8,5 @@
 
 # Manage cookbooks with berkshelf
 cookbooks
+# Capistrano generates json
+/*.json

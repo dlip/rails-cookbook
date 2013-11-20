@@ -16,13 +16,35 @@ set :stage, :staging
 # something that quacks like a hash can be used to set
 # extended properties on the server.
 
+node = {
+  :db => {
+    :mysql => {
+      :server_root_password => 'change_me',
+      :server_debian_password => 'change_me',
+      :server_repl_password => 'change_me',
+      :bind_address => '127.0.0.1'
+    },
+    :rails => {
+      :user => 'deploy',
+      :group => 'deploy',
+      :user => 'my_project',
+      :password => 'change_me',
+      :db_prefix => 'my_project'
+    },
+    "run_list" => [ "recipe[rails::database]" ]
+  },
+  :web => {
+    "run_list" => [ "recipe[rails::webserver]" ]
+  }
+}
+
 set :web_ip, 'example.com'
 set :db_ip, '127.0.0.1'
-set :db_username, 'root'
+set :db_username, 'my_project'
 set :db_password, 'change_me'
 set :nginx_host_name, 'my_project.example.com'
 
-server (fetch :web_ip), user: 'deploy', roles: %w{web db}
+server (fetch :web_ip), user: 'deploy', roles: %w{web db}, node: node
 
 # you can set custom ssh options
 # it's possible to pass any option but you need to keep in mind that net/ssh understand limited list of options
