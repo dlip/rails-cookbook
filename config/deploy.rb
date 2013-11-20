@@ -98,7 +98,7 @@ namespace :chef do
 
     # Generate node.json
     on roles(:all) do |role|
-      node = role.properties.node
+      node = fetch :node
       role.roles.each do |role_name|
         data = node[role_name].to_json
         filename = "node_#{fetch :stage}_#{role_name.to_s()}.json"

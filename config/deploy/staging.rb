@@ -16,7 +16,7 @@ set :stage, :staging
 # something that quacks like a hash can be used to set
 # extended properties on the server.
 
-node = {
+set :node, {
   :db => {
     :mysql => {
       :server_root_password => 'change_me',
@@ -27,14 +27,16 @@ node = {
     :rails => {
       :user => 'deploy',
       :group => 'deploy',
-      :user => 'my_project',
-      :password => 'change_me',
-      :db_prefix => 'my_project'
+      :mysql => {
+        :user => 'my_project',
+        :password => 'change_me',
+        :db_prefix => 'my_project'
+      }
     },
-    "run_list" => [ "recipe[rails::database]" ]
+    :run_list => [ "recipe[rails::database]" ]
   },
   :web => {
-    "run_list" => [ "recipe[rails::webserver]" ]
+    :run_list => [ "recipe[rails::webserver]" ]
   }
 }
 

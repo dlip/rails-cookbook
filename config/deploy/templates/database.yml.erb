@@ -1,8 +1,8 @@
 <%= fetch :stage %>:
   adapter: mysql2
   encoding: utf8
-  database: <%= fetch :application %>_<%= fetch :stage %>
-  username: <%= fetch :db_username %>
-  password: <%= fetch :db_password %>
-  host: <%= fetch :db_ip %>
+  database: <%= fetch(:node)[:db][:rails][:mysql][:db_prefix] %>_<%= fetch :stage %>
+  username: <%= fetch(:node)[:db][:rails][:mysql][:user] %>
+  password: <%= fetch(:node)[:db][:rails][:mysql][:password]%>
+  host: <%= fetch(:node)[:db][:mysql][:bind_address] %>
   port: 3306
