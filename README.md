@@ -18,15 +18,21 @@ username: root
 password: rootpass  
 
 ## Chef Solo
-Requires auto sudo acces on deploy user. You should edit the node options in chef/node_staging.json, and create other environments as needed.
+Requires auto sudo access on deploy user. You should edit the node options in chef/node_staging.json, and create other environments as needed.
 
-Install chef-solo
+### Config
+
+Capistrano config in `config/deploy/staging.rb`  
+Chef configs are `chef/node_staging_db.json` (will be run on all staging targets with db role) and `chef/node_staging_web.json` (will be run on all staging targets with web role)
+
+### Commands
+Install chef-solo  
 `bundle exec cap staging chef:bootstrap`
 
-Rsync cookbooks to remote and run
+Rsync cookbooks to remote and run  
 `bundle exec cap staging chef:provision`
 
-### Basic deploy user setup for CentOS
+### Deploy user setup for CentOS
 
 `useradd -m -s /bin/bash deploy`
 
