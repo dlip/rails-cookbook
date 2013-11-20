@@ -32,51 +32,26 @@ namespace :deploy do
 
   desc 'Stop Unicorn'
   after :updated, :stop_unicorn do
-    on roles(:app) do
+    on roles(:web) do
       execute "/etc/init.d/unicorn_#{fetch :application} stop"
     end
   end
   
   desc 'Start Unicorn'
   after :published, :start_unicorn do
-    on roles(:app) do
+    on roles(:web) do
       execute "mkdir -p #{current_path}/tmp/pids"
       execute "/etc/init.d/unicorn_#{fetch :application} start"
     end
   end
 
-  desc 'Restart application'
-  task :restart do
-    on roles(:app), in: :sequence, wait: 5 do
-      # Your restart mechanism here, for example:
-      # execute :touch, release_path.join('tmp/restart.txt')
-    end
-  end
-
-  after :restart, :clear_cache do
-    on roles(:web), in: :groups, limit: 3, wait: 10 do
-      # Here we can do anything such as:
-      # within release_path do
-      #   execute :rake, 'cache:clear'
-      # end
-    end
-  end
-
   before :updated, :setup_rails_config do
-    on roles(:app) do
+    on roles(:web) do
       template("nginx.conf.erb", "/etc/nginx/sites-enabled/#{fetch :application}")
       template("unicorn_init.sh.erb", "/etc/init.d/unicorn_#{fetch :application}")
       sudo ("chmod u+x /etc/init.d/unicorn_#{fetch :application}")
 
       template("database.yml.erb", "#{release_path}/config/database.yml")
-    end
-  end
-
-  task :setup_config do
-    on roles(:app) do
-      template("nginx.conf.erb", "/etc/nginx/sites-enabled/#{fetch :application}")
-      template("unicorn_init.sh.erb", "/etc/init.d/unicorn_#{fetch :application}")
-      sudo ("chmod u+x /etc/init.d/unicorn_#{fetch :application}")
     end
   end
 
