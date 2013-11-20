@@ -20,7 +20,7 @@ include_recipe "database::mysql"
     password      node[:rails][:mysql][:password]
     database_name db_name
     host          '%'
-    privileges    [:select,:update,:insert]
+    privileges    [:all]
     action        :grant
   end
 end
