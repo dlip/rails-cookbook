@@ -28,9 +28,9 @@ set :node, {
       :user => 'deploy',
       :group => 'deploy',
       :mysql => {
-        :user => 'my_project',
+        :user => fetch(:application),
         :password => 'change_me',
-        :db_prefix => 'my_project'
+        :db_prefix => fetch(:application)
       }
     },
     :run_list => [ "recipe[rails::database]" ]
@@ -41,12 +41,9 @@ set :node, {
 }
 
 set :web_ip, 'example.com'
-set :db_ip, '127.0.0.1'
-set :db_username, 'my_project'
-set :db_password, 'change_me'
 set :nginx_host_name, 'my_project.example.com'
 
-server (fetch :web_ip), user: 'deploy', roles: %w{web db}, node: node
+server (fetch :web_ip), user: 'deploy', roles: %w{web db}
 
 # you can set custom ssh options
 # it's possible to pass any option but you need to keep in mind that net/ssh understand limited list of options
