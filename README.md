@@ -2,8 +2,8 @@
 
 Cookbook created with Berkshelf for a complete Rails 4 environment including:
 * Vagrant 2 virtual machine configuration
-* Capistrano deploy to server on unicorn with nginx
-* Capistrano rsync cookbooks and run chef-solo remotely
+* Capistrano 3 deploy to server on unicorn with nginx
+* Chef-solo provision (rsync cookbooks and run with capistrano)
 * Recipes for rbenv using ruby 2.0, mysql, nginx and phpmyadmin
 
 # Setup
@@ -22,8 +22,9 @@ Requires auto sudo access on deploy user. You should edit the node options in ch
 
 ### Config
 This assumumes you have a rails config for staging, you can rename to production etc. as you like.  
-Capistrano config in `config/deploy/staging.rb`  
-Chef configs are `chef/node_staging_db.json` (will be run on all staging targets with db role) and `chef/node_staging_web.json` (will be run on all staging targets with web role)
+* Capistrano config in `config/deploy/staging.rb`  
+* Chef configs are `chef/node_staging_db.json` (will be run on all staging targets with db role) and `chef/node_staging_web.json` (will be run on all staging targets with web role)
+* Templates database.yml etc. in `config/deploy/templates`
 
 ### Commands
 Install chef-solo  
@@ -33,7 +34,6 @@ Rsync cookbooks to remote and run
 `bundle exec cap staging chef:provision`
 
 ### Deploy user setup for CentOS
-
 `useradd -m -s /bin/bash deploy`
 
 `visudo`  
