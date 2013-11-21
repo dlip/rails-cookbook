@@ -1,7 +1,7 @@
 # rails-cookbook
 
 Cookbook created with Berkshelf for a complete Rails 4 environment including:
-* Vagrant 2 virtual machine configuration
+* Vagrant v1.3.5 (config version 2) virtual machine
 * Capistrano 3 deploy to server on unicorn with nginx
 * Chef-solo provision (rsync cookbooks and run with capistrano)
 * Recipes for rbenv using ruby 2.0, mysql, nginx and phpmyadmin
