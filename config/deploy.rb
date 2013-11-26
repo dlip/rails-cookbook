@@ -65,6 +65,13 @@ namespace :deploy do
     end
   end
 
+  desc 'Setup DB'
+  task :dbsetup do
+    on roles(:web) do
+      execute "cd #{current_path} && RAILS_ENV=#{fetch :stage} bundle exec rake db:setup"
+    end
+  end
+
   after :updated, "deploy:compile_assets"
   after :updated, "deploy:migrate"
   after :finishing, 'deploy:cleanup'
