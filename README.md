@@ -8,7 +8,8 @@ Cookbook created with Berkshelf for a complete Rails 4 environment including:
 
 # Setup
 `bundle install`  
-`vagrant plugin install vagrant-berkshelf`
+`vagrant plugin install vagrant-berkshelf`  
+`vagrant up`
 
 # Vagrant config
 
@@ -21,7 +22,7 @@ password: rootpass
 ### Config
 Requires auto sudo access on deploy user. This assumes you have a rails config for staging, you can rename to production etc. as you like.  
 * Config in `config/deploy/staging.rb`  
-  * The chef config is created from the `:node` array. `:db` and `:web` is the config for each role. 
+    * The chef config is created from the `:node` array. `:db` and `:web` is the config for each role. 
 * Templates database.yml etc. in `config/deploy/templates`
 
 ### Commands
