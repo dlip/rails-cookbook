@@ -33,7 +33,7 @@ Vagrant.configure("2") do |config|
   # WebBrick
   config.vm.network :forwarded_port, guest: 3000, host: 3000
   # MySql
-  config.vm.network :forwarded_port, guest: 3306, host: 3306
+  config.vm.network :forwarded_port, guest: 3306, host: 33306
   # Nginx
   config.vm.network :forwarded_port, guest: 80, host: 8080
   # phpmyadmin
@@ -85,7 +85,7 @@ Vagrant.configure("2") do |config|
         :server_root_password => 'rootpass',
         :server_debian_password => 'debpass',
         :server_repl_password => 'replpass',
-        :bind_address => '127.0.0.1'
+        :bind_address => '0.0.0.0'
       },
       :rails => {
         :user => 'vagrant',
