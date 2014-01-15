@@ -1,21 +1,38 @@
-upstream unicorn {
-  server unix:/tmp/unicorn.<%= fetch :application %>.sock fail_timeout=0;
+upstream <%= fetch :application %> {
+server unix:/tmp/unicorn.<%= fetch :application %>.sock;
 }
 
 server {
-  listen 80;
-  server_name <%= fetch :nginx_host_name %>;
+  listen *:80;         # e.g., listen 192.168.1.1:80; In most cases *:80 is a good idea
+  server_name <%= fetch :nginx_host_name %>;     # e.g., server_name source.example.com;
+  server_tokens off;     # don't show the version number, a security best practice
   root <%= current_path %>/public;
 
-  try_files $uri/index.html $uri @unicorn;
-  location @unicorn {
-    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-    proxy_set_header Host $http_host;
-    proxy_redirect off;
-    proxy_pass http://unicorn;
+  # Set value of client_max_body_size
+  client_max_body_size 5m;
+
+  # individual nginx logs for this vhost
+  access_log  /var/log/nginx/<%= fetch :application %>_access.log;
+  error_log   /var/log/nginx/<%= fetch :application %>_error.log;
+
+  location / {
+    # serve static files from defined root folder;.
+    # @app_name is a named location for the upstream fallback, see below
+    try_files $uri $uri/index.html $uri.html @<%= fetch :application %>;
   }
 
-  error_page 500 502 503 504 /500.html;
-  client_max_body_size 4G;
-  keepalive_timeout 10;
+  # if a file, which is not found in the root folder is requested,
+  # then the proxy pass the request to the upsteam (<%= fetch :application %> unicorn)
+  location @<%= fetch :application %> {
+    proxy_read_timeout 300; # Some requests take more than 30 seconds.
+    proxy_connect_timeout 300; # Some requests take more than 30 seconds.
+    proxy_redirect     off;
+
+    proxy_set_header   X-Forwarded-Proto $scheme;
+    proxy_set_header   Host              $http_host;
+    proxy_set_header   X-Real-IP         $remote_addr;
+    proxy_set_header   X-Forwarded-For   $proxy_add_x_forwarded_for;
+
+    proxy_pass http://<%= fetch :application %>;
+  }
 }
