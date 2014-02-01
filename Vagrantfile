@@ -100,7 +100,7 @@ Vagrant.configure("2") do |config|
         }
       },
       :rbenv => {
-        :group_users => 'vagrant'
+        :group_users => ['vagrant']
       }
     }
 

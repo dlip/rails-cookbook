@@ -12,23 +12,19 @@ include_recipe "rbenv::default"
 include_recipe "rbenv::ruby_build"
 
 # Ruby
-rbenv_ruby node[:rails][:ruby][:version]
+rbenv_ruby "#{node[:rails][:ruby][:version]}" do
+  ruby_version node[:rails][:ruby][:version]
+  global true
+end
 
-#group "rbenv" do               
-  #action :create               
-  #members node[:rails][:user]            
-  #gid 1100
-  #append true
-#end     
-
-#bash "chgrp and chmod" do
-  #user "root"
-  #cwd "/opt"
-  #code <<-EOH
-    #chgrp -R rbenv rbenv
-    #chmod -R g+rwxX rbenv
-  #EOH
-#end
+bash "Fix rbenv path permissions for our user" do
+  user "root"
+  cwd "/opt"
+  code <<-EOH
+    chgrp -R rbenv rbenv
+    chmod -R g+rwxX rbenv
+  EOH
+end
 
 # Gems
 rbenv_gem "bundler" do
@@ -39,10 +35,7 @@ rbenv_gem "rails" do
   ruby_version node[:rails][:ruby][:version]
 end
 
-#execute "set default rbenv ruby" do
-  #command "rbenv global 2.0.0-p247"
-  #only_if "rbenv global | grep system"
-#end
 
 package "mysql-devel"
+package "sqlite-devel"
 include_recipe "nodejs"
