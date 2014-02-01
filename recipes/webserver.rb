@@ -17,15 +17,6 @@ rbenv_ruby "#{node[:rails][:ruby][:version]}" do
   global true
 end
 
-bash "Fix rbenv path permissions for our user" do
-  user "root"
-  cwd "/opt"
-  code <<-EOH
-    chgrp -R rbenv rbenv
-    chmod -R g+rwxX rbenv
-  EOH
-end
-
 # Gems
 rbenv_gem "bundler" do
   ruby_version node[:rails][:ruby][:version]
@@ -35,6 +26,14 @@ rbenv_gem "rails" do
   ruby_version node[:rails][:ruby][:version]
 end
 
+bash "Fix rbenv path permissions for our user" do
+  user "root"
+  cwd "/opt"
+  code <<-EOH
+    chgrp -R rbenv rbenv
+    chmod -R g+rwxX rbenv
+  EOH
+end
 
 package "mysql-devel"
 package "sqlite-devel"
