@@ -1,6 +1,9 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
+Vagrant.require_plugin "vagrant-berkshelf"
+Vagrant.require_plugin "vagrant-omnibus"
+
 Vagrant.configure("2") do |config|
   # All Vagrant configuration is done here. The most common configuration
   # options are documented and commented below. For a complete reference,
@@ -90,14 +93,14 @@ Vagrant.configure("2") do |config|
       :rails => {
         :user => 'vagrant',
         :group => 'vagrant',
-        :ruby => {
-          :version => "2.0.0-p247"
-        },
         :mysql => {
           :user => "my_project",
           :password => "change_me",
           :db_prefix => "my_project"
         }
+      },
+      :rbenv => {
+        :group_users => 'vagrant'
       }
     }
 

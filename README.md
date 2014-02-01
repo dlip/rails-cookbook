@@ -9,7 +9,8 @@ Cookbook created with Berkshelf for a complete Rails 4 environment including:
 # Setup
 `bundle install`  
 `vagrant plugin install vagrant-berkshelf`  
-`vagrant up`
+`vagrant plugin install vagrant-omnibus`  
+`bundle exec vagrant up`
 
 # Vagrant config
 
